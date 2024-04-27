@@ -45,10 +45,12 @@ app.post("/addProduct", async (req, res) => {
 
     const newDocument = {
       id: values[0], // also "id": req.body.id,
-      name: values[1], // also "name": req.body.name,
+      title: values[1], // also "name": req.body.name,
       price: values[2], // also "price": req.body.price,
       description: values[3], // also "description": req.body.description,
-      imageUrl: values[4], // also "imageUrl": req.body.imageUrl
+      category: values[4],
+      imageUrl: values[5], // also "imageUrl": req.body.imageUrl
+      rating: values[6] // grabbing rating
     };
 
     console.log(newDocument);
@@ -88,7 +90,7 @@ app.put("/updateProduct/:id", async (req, res) => {
   const id = Number(req.params.id);
   const query = { id: id };
   await client.connect();
-  console.log("Robot to Update :", id);
+  console.log("Product to Update :", id);
   // Data for updating the document, typically comes from the request body
   // console.log(req.body);
   // read data from robot to update to send to frontend
@@ -98,7 +100,9 @@ app.put("/updateProduct/:id", async (req, res) => {
       name: req.body.name,
       price: req.body.price,
       description: req.body.description,
+      category: req.body.category,
       imageUrl: req.body.imageUrl,
+      rating: req.body.rating
     },
   };
   // Add options if needed, for example { upsert: true } to create a document if it doesn't exist

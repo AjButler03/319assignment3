@@ -4,7 +4,9 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./App.css";
 import logo2 from "./logo.png";
-import productData from "./products.json";
+// import productData from "./products.json";
+const productData = await fetch("http://localhost:8081/listProducts").then(res => res.json()) // fetch product information, placed in productData variable
+
 
 const Header = ({
   onSearch,

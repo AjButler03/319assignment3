@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Accordion, AccordionItem, Button, Card } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.css";
@@ -14,6 +14,8 @@ const productData = await fetch("http://localhost:8081/listProducts").then(
 const ItemForm = ({ onSubmit }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
+
+
   const validateRatingRate = (value) => {
     if (value === '') return true; // Allow empty value
     const rate = parseFloat(value);
@@ -22,34 +24,42 @@ const ItemForm = ({ onSubmit }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+
       <div className="mb-3 row">
         <div className="col-sm-2">
           <label htmlFor="id" className="form-label">ID:</label>
           <input type="text" className="form-control" {...register('id')} />
+          {errors.id && <span className="text-danger">Id is required</span>}
         </div>
         <div className="col-sm-7">
           <label htmlFor="title" className="form-label">Title:</label>
           <input type="text" className="form-control" {...register('title', { required: true })} />
-          {errors.title && <span className="text-danger">This field is required</span>}
+          {errors.title && <span className="text-danger">Title is required</span>}
         </div>
         <div className="col-sm-3">
           <label htmlFor="price" className="form-label">Price:</label>
-          <input type="number" className="form-control" {...register('price', { required: true })} />
-          {errors.price && <span className="text-danger">This field is required</span>}
+          <input type="text" className="form-control" {...register('price', { required: true })} />
+          {errors.price && <span className="text-danger">Price is required</span>}
         </div>
       </div>
 
       <div className="mb-3">
         <label htmlFor="description" className="form-label">Description:</label>
         <textarea className="form-control" {...register('description', { required: true })}></textarea>
-        {errors.description && <span className="text-danger">This field is required</span>}
+        {errors.description && <span className="text-danger">Description is required</span>}
+      </div>
+
+      <div className="mb-3">
+        <label htmlFor="imageUrl" className="form-label">Image URL:</label>
+        <input type="text" className="form-control" {...register('imageUrl')} />
+        {errors.category && <span className="text-danger">Image URL is required</span>}
       </div>
 
       <div className="mb-3 row">
         <div className="col-sm-8">
           <label htmlFor="category" className="form-label">Category:</label>
           <input type="text" className="form-control" {...register('category', { required: true })} />
-          {errors.category && <span className="text-danger">This field is required</span>}
+          {errors.category && <span className="text-danger">Category is required</span>}
         </div>
         <div className="col-sm-2">
           <label htmlFor="ratingRate" className="form-label">Rating Rate:</label>
@@ -59,10 +69,12 @@ const ItemForm = ({ onSubmit }) => {
         <div className="col-sm-2">
           <label htmlFor="ratingCount" className="form-label">Rating Count:</label>
           <input type="text" className="form-control" {...register('ratingCount')} />
+          {errors.ratingCount && <span className="text-danger">Rating is required</span>}
         </div>
       </div>
 
-      <button type="submit" className="btn btn-primary">Submit</button>
+
+      <button type="submit" className="btn btn-primary">Submit Item</button>
     </form>
   );
 };
@@ -82,30 +94,37 @@ const UpdateForm = ({ onSubmit }) => {
         <div className="col-sm-2">
           <label htmlFor="id" className="form-label">ID:</label>
           <input type="text" className="form-control" {...register('id')} />
+          {errors.id && <span className="text-danger">Id is required</span>}
         </div>
         <div className="col-sm-7">
           <label htmlFor="title" className="form-label">New Title:</label>
           <input type="text" className="form-control" {...register('title', { required: true })} />
-          {errors.title && <span className="text-danger">This field is required</span>}
+          {errors.title && <span className="text-danger">Title is required</span>}
         </div>
         <div className="col-sm-3">
           <label htmlFor="price" className="form-label">New Price:</label>
-          <input type="number" className="form-control" {...register('price', { required: true })} />
-          {errors.price && <span className="text-danger">This field is required</span>}
+          <input type="text" className="form-control" {...register('price', { required: true })} />
+          {errors.price && <span className="text-danger">Price is required</span>}
         </div>
       </div>
 
       <div className="mb-3">
         <label htmlFor="description" className="form-label">New Description:</label>
         <textarea className="form-control" {...register('description', { required: true })}></textarea>
-        {errors.description && <span className="text-danger">This field is required</span>}
+        {errors.description && <span className="text-danger">Description is required</span>}
+      </div>
+
+      <div className="mb-3">
+        <label htmlFor="imageUrl" className="form-label">New Image URL:</label>
+        <input type="text" className="form-control" {...register('imageUrl')} />
+        {errors.category && <span className="text-danger">Image URL is required</span>}
       </div>
 
       <div className="mb-3 row">
         <div className="col-sm-8">
           <label htmlFor="category" className="form-label">New Category:</label>
           <input type="text" className="form-control" {...register('category', { required: true })} />
-          {errors.category && <span className="text-danger">This field is required</span>}
+          {errors.category && <span className="text-danger">Category is required</span>}
         </div>
         <div className="col-sm-2">
           <label htmlFor="ratingRate" className="form-label">New Rating Rate:</label>
@@ -115,6 +134,7 @@ const UpdateForm = ({ onSubmit }) => {
         <div className="col-sm-2">
           <label htmlFor="ratingCount" className="form-label">New Rating Count:</label>
           <input type="text" className="form-control" {...register('ratingCount')} />
+          {errors.ratingCount && <span className="text-danger">Rating is required</span>}
         </div>
       </div>
 
@@ -122,6 +142,7 @@ const UpdateForm = ({ onSubmit }) => {
     </form>
   );
 };
+
 
 const App = () => {
   // State to manage the collapse status of each accordion item
@@ -131,6 +152,50 @@ const App = () => {
   const toggleCollapse = (item) => {
     setOpenItem(openItem === item ? null : item);
   };
+
+  const ReadAccordionItem = () => {
+    const [products, setProducts] = useState([]);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch("http://localhost:8081/listProducts");
+          const data = await response.json();
+          setProducts(data);
+        } catch (error) {
+          console.error("Error fetching products:", error);
+        }
+      };
+
+      if (openItem === 2) {
+        fetchData();
+      } else {
+        setProducts([]);
+      }
+    }, [openItem]);
+
+    return (
+      <div className="accordion-body">
+        {openItem === 2 && (
+          <ul>
+            {products.map(product => (
+              <li key={product.id}>
+                <strong>ID:</strong> {product.id} <br />
+                <strong>Title:</strong> {product.title} <br />
+                <strong>Price:</strong> ${product.price} <br />
+                <strong>Description:</strong> {product.description} <br />
+                <strong>Category:</strong> {product.category} <br />
+                <strong>Image URL:</strong> {product.image} <br />
+                <strong>Rating Rate:</strong> {product.rating.rate} <br />
+                <strong>Rating Count:</strong> {product.rating.count} <br />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  };
+
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -178,7 +243,7 @@ const App = () => {
               aria-labelledby="headingTwo"
             >
               <div className="accordion-body">
-                <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                <ReadAccordionItem />
               </div>
             </div>
           </div>
@@ -202,7 +267,7 @@ const App = () => {
             >
               <div className="accordion-body">
 
-                <UpdateForm/>
+                <UpdateForm />
               </div>
             </div>
           </div>

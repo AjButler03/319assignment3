@@ -73,7 +73,7 @@ const Header = ({
             <button
               type="button"
               className="btn btn-outline-light me-2 btn-lg border-1"
-              // onClick={ToggleAbout} // toggle about us view
+            // onClick={ToggleAbout} // toggle about us view
             >
               About us
             </button>
@@ -396,88 +396,129 @@ const AddForm = ({
 };
 
 const App = () => {
-  const [filteredProducts, setFilteredProducts] = useState(productData);
+  // const [filteredProducts, setFilteredProducts] = useState(productData);
   // const [cartItems, setCartItems] = useState({});
-  const [showSidebar, setShowSidebar] = useState(false);
-  const [showCheckoutForm, setShowCheckoutForm] = useState(false);
-  const [dataF, setDataF] = useState({});
-  const [viewer, setViewer] = useState(0);
+  // const [showSidebar, setShowSidebar] = useState(false);
+  // const [showCheckoutForm, setShowCheckoutForm] = useState(false);
+  // const [dataF, setDataF] = useState({});
+  // const [viewer, setViewer] = useState(0);
 
-  const filterProducts = (category) => {
-    if (category === "all") {
-      setFilteredProducts(productData);
-    } else {
-      const filtered = productData.filter(
-        (product) => product.category.toLowerCase() === category
-      );
-      setFilteredProducts(filtered);
-    }
-  };
+  // const filterProducts = (category) => {
+  //   if (category === "all") {
+  //     setFilteredProducts(productData);
+  //   } else {
+  //     const filtered = productData.filter(
+  //       (product) => product.category.toLowerCase() === category
+  //     );
+  //     setFilteredProducts(filtered);
+  //   }
+  // };
 
-  const handleSearch = (searchQuery) => {
-    const searchResults = productData.filter((product) =>
-      product.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredProducts(searchResults);
-  };
+  // const handleSearch = (searchQuery) => {
+  //   const searchResults = productData.filter((product) =>
+  //     product.title.toLowerCase().includes(searchQuery.toLowerCase())
+  //   );
+  //   setFilteredProducts(searchResults);
+  // };
 
-  const toggleSidebar = () => {
-    setShowSidebar(!showSidebar);
-    if (showSidebar) {
-      document.body.classList.remove("no-scroll");
-    } else {
-      document.body.classList.add("no-scroll");
-    }
-  };
+  // const toggleSidebar = () => {
+  //   setShowSidebar(!showSidebar);
+  //   if (showSidebar) {
+  //     document.body.classList.remove("no-scroll");
+  //   } else {
+  //     document.body.classList.add("no-scroll");
+  //   }
+  // };
 
-  const toggleAddForm = () => {
-    setShowCheckoutForm(!showCheckoutForm);
-    if (showCheckoutForm) {
-      document.body.classList.remove("no-scroll");
-    } else {
-      document.body.classList.add("no-scroll");
-    }
-  };
+  // const toggleAddForm = () => {
+  //   setShowCheckoutForm(!showCheckoutForm);
+  //   if (showCheckoutForm) {
+  //     document.body.classList.remove("no-scroll");
+  //   } else {
+  //     document.body.classList.add("no-scroll");
+  //   }
+  // };
 
-  return (
-    <div>
-      <Header
-        onSearch={handleSearch}
-        toggleSidebar={toggleSidebar}
-        toggleAddForm={toggleAddForm}
-      />
-      <hr className="hr hr-blurry bg-dark m-0" />
-      <FilterBar filterProducts={filterProducts} />
+  // return (
+  //   <div>
+  //     <Header
+  //       onSearch={handleSearch}
+  //       toggleSidebar={toggleSidebar}
+  //       toggleAddForm={toggleAddForm}
+  //     />
+  //     <hr className="hr hr-blurry bg-dark m-0" />
+  //     <FilterBar filterProducts={filterProducts} />
 
-      {/* <Sidebar
-        isOpen={showSidebar}
-        toggleSidebar={toggleSidebar}
-        cartItems={cartItems}
-        handleAdd={handleAdd}
-        handleSubtract={handleSubtract}
-        handleDelete={handleDelete}
-        calculateTotal={calculateTotal}
-        toggleCheckoutForm={toggleCheckoutForm}
-      /> */}
+  //     {/* <Sidebar
+  //       isOpen={showSidebar}
+  //       toggleSidebar={toggleSidebar}
+  //       cartItems={cartItems}
+  //       handleAdd={handleAdd}
+  //       handleSubtract={handleSubtract}
+  //       handleDelete={handleDelete}
+  //       calculateTotal={calculateTotal}
+  //       toggleCheckoutForm={toggleCheckoutForm}
+  //     /> */}
 
-      <AddForm
-        isOpen={showCheckoutForm}
-        toggleAddtForm={toggleAddForm}
-        dataF={dataF}
-        setDataF={setDataF}
-        viewer={viewer}
-        setViewer={setViewer}
-      />
+  //     <AddForm
+  //       isOpen={showCheckoutForm}
+  //       toggleAddtForm={toggleAddForm}
+  //       dataF={dataF}
+  //       setDataF={setDataF}
+  //       viewer={viewer}
+  //       setViewer={setViewer}
+  //     />
 
-      <div className="container-fluid pt-4 overflow-auto">
-        <div className="row">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+  //     <div className="container-fluid pt-4 overflow-auto">
+  //       <div className="row">
+  //         {filteredProducts.map((product) => (
+  //           <ProductCard key={product.id} product={product} />
+  //         ))}
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
+
+  return (<div>
+    <div class="accordion" id="accordionExample">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+            Accordion Item #1
+          </button>
+        </h2>
+        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+            <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+            Accordion Item #2
+          </button>
+        </h2>
+        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+            <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+          </div>
+        </div>
+      </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingThree">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+            Accordion Item #3
+          </button>
+        </h2>
+        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+          <div class="accordion-body">
+            <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+          </div>
         </div>
       </div>
     </div>
-  );
+  </div>);
 };
 
 export default App;

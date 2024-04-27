@@ -81,8 +81,6 @@ app.delete("/deleteProduct/:id", async (req, res) => {
     res.send(results);
   } catch (error) {
     console.error("Error deleting product:", error);
-    // something about this line was crashing the server; just commenting it out
-    // res.status(500).send({ message: "Internal Server Error" });
   }
 });
 

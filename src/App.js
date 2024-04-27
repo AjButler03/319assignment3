@@ -57,7 +57,7 @@ const Header = ({
             <button
               type="button"
               className="btn btn-outline-light ms-4 btn-lg border-1"
-              onClick={toggleAddForm}
+              onClick={toggleAddForm} // to go form to add item
             >
               Add_Item
             </button>
@@ -73,7 +73,7 @@ const Header = ({
             <button
               type="button"
               className="btn btn-outline-light me-2 btn-lg border-1"
-              // onClick={clearCart} // toggle about us view
+              // onClick={ToggleAbout} // toggle about us view
             >
               About us
             </button>
@@ -240,18 +240,94 @@ const AddForm = ({
     return (
       <div className="container mt-5 col-md-8">
         <div className="row-md-6">
-          <h3>Your Order summary:</h3>
+          <h3>Enter Product information</h3>
           <hr className="hr hr-blurry bg-dark m-0 mb-3 mt-3" />
-          <hr className="hr hr-blurry  bg-dark m-0" />
-          <hr className="hr hr-blurry  bg-dark m-0 mb-3" />
         </div>
 
         <div className="row-md-6">
           <form onSubmit={handleSubmit(onSubmit)} className="container mt-5 ">
-            <h3>Product item Details:</h3>
+            <h4>Product id</h4>
+            <input
+              {...register("id", { required: true, pattern: /[0-9]/ })}
+              placeholder="id number"
+              className="form-control"
+            />
+            {errors.id && (
+              <p className="text-danger">a product id number is required.</p>
+            )}
 
-            <hr className="hr hr-blurry  bg-dark m-0 mb-3 mt-3" />
+            <h4>Product title</h4>
+            <input
+              {...register("title", { required: true })}
+              placeholder="item"
+              className="form-control"
+            />
+            {errors.title && (
+              <p className="text-danger">A product title is required.</p>
+            )}
 
+            <h4>Price</h4>
+            <input
+              {...register("price", { required: true })}
+              placeholder="$999.99"
+              className="form-control"
+            />
+            {errors.price && (
+              <p className="text-danger">A valid product price is required.</p>
+            )}
+
+            <h4>Description</h4>
+            <input
+              {...register("desc", { required: true })}
+              placeholder="A short description"
+              className="form-control"
+            />
+            {errors.desc && (
+              <p className="text-danger">Product description is required.</p>
+            )}
+
+            <h4>Product Category</h4>
+            <input
+              {...register("cat", { required: true })}
+              placeholder="i.e., Mens's clothing"
+              className="form-control"
+            />
+            {errors.cat && (
+              <p className="text-danger">Product category is required.</p>
+            )}
+
+            <h4>Image URL</h4>
+            <input
+              {...register("img", { required: true })}
+              placeholder="i.e., https://website.com/img.jpeg"
+              className="form-control"
+            />
+            {errors.img && (
+              <p className="text-danger">A valid Image URL is required.</p>
+            )}
+
+            <h4>Product star rating</h4>
+            <input
+              {...register("numStars", { required: true })}
+              placeholder="0"
+              className="form-control"
+            />
+            {errors.numStars && (
+              <p className="text-danger">Star rating is required.</p>
+            )}
+
+            <h4>Number of ratings</h4>
+            <input
+              {...register("numRatings", { required: true })}
+              placeholder="0"
+              className="form-control"
+            />
+            {errors.numRatings && (
+              <p className="text-danger">Number of ratings is required.</p>
+            )}
+            <button type="submit" className="btn btn-primary btn-outline-secondary btn-lg mt-3 mb-4" style={{ backgroundColor: "#ff9900", borderColor: "#ff9900" }}>
+              Confirm and add to database
+            </button>
           </form>
         </div>
       </div>
@@ -303,13 +379,13 @@ const AddForm = ({
       {isOpen && <div className="overlayForm"></div>}
       <div className={`checkout-form ${isOpen ? "open" : ""}`}>
         <div className="header bg-dark text-white d-flex justify-content-between align-items-center px-4 py-3">
-          <h2 className="m-0">Product Added</h2>
+          <h2 className="m-0">Add Product</h2>
           <button
             type="button"
             className="btn btn-lg btn-outline-light"
             onClick={toggleAddForm}
           >
-            Return to Shopping
+            Return to home
           </button>
         </div>
         {viewer === 1 && <Confirmation />}
@@ -384,31 +460,19 @@ const App = () => {
         toggleCheckoutForm={toggleCheckoutForm}
       /> */}
 
-      {/* <CheckoutForm
+      <AddForm
         isOpen={showCheckoutForm}
-        toggleCheckoutForm={toggleCheckoutForm}
+        toggleAddtForm={toggleAddForm}
         dataF={dataF}
         setDataF={setDataF}
         viewer={viewer}
         setViewer={setViewer}
-        cartItems={cartItems}
-        handleAdd={handleAdd}
-        handleSubtract={handleSubtract}
-        handleDelete={handleDelete}
-        calculateTotal={calculateTotal}
-        clearCart={clearCart}
-      /> */}
+      />
 
       <div className="container-fluid pt-4 overflow-auto">
         <div className="row">
           {filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              // handleAdd={() => handleAdd(product.id)}
-              // handleSubtract={() => handleSubtract(product.id)}
-              // cartItems={cartItems[product.id] || 0}
-            />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </div>

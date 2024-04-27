@@ -144,6 +144,34 @@ const UpdateForm = ({ onSubmit }) => {
 };
 
 
+const DeleteProduct = () => {
+  const [productId, setProductId] = useState('');
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`http://localhost:8081/deleteProduct/${productId}`, {
+        method: 'DELETE'
+      });
+      const deletedProduct = await response.json();
+      console.log('Deleted product:', deletedProduct);
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
+
+  const handleChange = (event) => {
+    setProductId(event.target.value);
+  };
+
+  return (
+    <div className="mb-3">
+      <label htmlFor="removeItemId" className="form-label">Remove item with ID:</label>
+      <input type="text" className="form-control" id="removeItemId" value={productId} onChange={handleChange} />
+      <button type="button" className="btn btn-danger mt-2" onClick={handleDelete}>Delete</button>
+    </div>
+  );
+};
+
 const App = () => {
   // State to manage the collapse status of each accordion item
   const [openItem, setOpenItem] = useState(null);
@@ -290,11 +318,13 @@ const App = () => {
               aria-labelledby="headingFour"
             >
               <div className="accordion-body">
-                <div className="mb-3">
+                <DeleteProduct />
+                {/* <div className="mb-3">
+                
                   <label htmlFor="removeItemId" className="form-label">Remove item with ID:</label>
                   <input type="text" className="form-control" id="removeItemId" />
                 </div>
-                <button type="button" className="btn btn-danger">Delete</button>
+                <button type="button" className="btn btn-danger">Delete</button> */}
               </div>
             </div>
           </div>

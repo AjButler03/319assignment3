@@ -1,524 +1,147 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { Accordion, AccordionItem, Button, Card } from 'react-bootstrap';
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./App.css";
-import logo2 from "./logo.png";
+
 // import productData from "./products.json";
 const productData = await fetch("http://localhost:8081/listProducts").then(
   (res) => res.json()
 ); // fetch product information, placed in productData variable
-
-const Header = ({
-  onSearch,
-  toggleAddForm,
-  ToggleDeleteForm,
-  ToggleAboutUs,
-}) => {
-  const handleSearch = (event) => {
-    if (event.key === "Enter" || event.type === "click") {
-      const searchInput = event.target
-        .closest(".input-group")
-        .querySelector("input").value;
-      onSearch(searchInput);
-    }
-  };
-
-  return (
-    <header className="p-3 bg-dark text-white">
-      <div className="container-fluid">
-        <div className="d-flex flex-wrap align-items-center justify-content-between justify-content-lg-between">
-          <img
-            src={logo2}
-            minHeight="35"
-            className="my-auto mx-3 py-2"
-            alt="Logo"
-          />
-          <div className="col-12 col-lg-auto d-flex mb-3 mb-lg-0 me-lg-auto py-3">
-            <div className="input-group">
-              <input
-                id="searchInput"
-                type="search"
-                className="form-control form-control-dark"
-                style={{ width: "350px" }}
-                placeholder="Search for products..."
-                aria-label="Search"
-                onKeyDown={handleSearch}
-              />
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                style={{ backgroundColor: "#ff9900", borderColor: "#ff9900" }}
-                onClick={handleSearch}
-              >
-                <i className="bi bi-search"></i>
-              </button>
-            </div>
-            <button
-              type="button"
-              className="btn btn-outline-light ms-4 btn-lg border-1"
-              onClick={toggleAddForm} // to go form to add item
-            >
-              Add_Item
-            </button>
-            <button
-              type="button"
-              className="btn btn-outline-light ms-4 btn-lg border-1"
-              onClick={toggleAddForm} // eventually a remove form
-            >
-              Remove_Item
-            </button>
-          </div>
-          <div className="text-end">
-            <button
-              type="button"
-              className="btn btn-outline-light me-2 btn-lg border-1"
-            // onClick={ToggleAbout} // toggle about us view
-            >
-              About us
-            </button>
-          </div>
-        </div>
-      </div>
-    </header>
-  );
-};
-
-//Search by filters, located udner header
-const FilterBar = ({ filterProducts }) => {
-  const filterTitles = [
-    "All",
-    "Jewelery",
-    "Men's clothing",
-    "Women's clothing",
-    "Electronics",
-  ];
-
-  const handleClick = (category) => {
-    filterProducts(category);
-  };
-
-  return (
-    <div className="bg-dark text-white">
-      <div className="container d-flex justify-content-between align-items-center">
-        <div className="vr vr-blurry" />
-        {filterTitles.map((title, index) => (
-          <React.Fragment key={index}>
-            {index !== 0 && <div className="vr vr-blurry" />}
-            <button
-              type="button"
-              className="btn btn-outline-light border-0 px-2 mx-1 my-1 flex-grow-1"
-              onClick={() => handleClick(title.toLowerCase())}
-            >
-              {title}
-            </button>
-          </React.Fragment>
-        ))}
-        <div className="vr vr-blurry" />
-      </div>
-    </div>
-  );
-};
-
-//Generate stars based on numerical rating
-const generateStarIcons = (rating) => {
-  const stars = [];
-  const filledStars = Math.floor(rating);
-  const hasHalfStar = rating - filledStars >= 0.5;
-
-  for (let i = 0; i < 5; i++) {
-    if (i < filledStars) {
-      stars.push(<i key={i} className="bi bi-star-fill text-warning"></i>);
-    } else if (hasHalfStar && i === filledStars) {
-      stars.push(<i key={i} className="bi bi-star-half text-warning"></i>);
-    } else {
-      stars.push(<i key={i} className="bi bi-star text-warning"></i>);
-    }
-  }
-
-  return stars;
-};
-
-//Contains the body that hold all cards
-const ProductCard = ({ product }) => {
-  return (
-    <div className="col-sm-6 col-md-4 col-lg-3 mb-4">
-      <div className="card h-100 rounded-0 d-flex flex-column">
-        <img
-          src={product.image}
-          className="card-img-top"
-          alt="Product Image"
-          style={{
-            maxHeight: "200px",
-            objectFit: "contain",
-            minHeight: "150px",
-          }}
-        />
-        <ProductCardBody product={product} />
-      </div>
-    </div>
-  );
-};
-
-//Contains the card
-const ProductCardBody = ({ product, toggleEditForm }) => {
-  return (
-    <div className="card-body flex-fill d-flex flex-column ">
-      <h5 className="card-title" style={{ fontSize: "24px" }}>
-        {product.title}
-      </h5>
-      <p
-        className="card-text"
-        style={{
-          fontSize: "16px",
-          lineHeight: "1.5",
-          maxHeight: "3em",
-          overflow: "hidden",
-        }}
-      >
-        {product.description}
-      </p>
-      <div className="mt-auto d-flex flex-wrap justify-content-between align-items-center ">
-        <div>
-          <p
-            className="card-text"
-            style={{
-              fontSize: "24px",
-              fontWeight: "bold",
-              marginBottom: "3px",
-              whiteSpace: "nowrap",
-            }}
-          >
-            Price: ${product.price}
-          </p>
-          <p className="card-text mb-0" style={{ fontSize: "16px" }}>
-            Rating: {generateStarIcons(product.rating.rate)} (
-            {product.rating.count})
-          </p>
-        </div>
-        <div>
-          <div className="d-flex pt-2">
-            <a
-              className="btn btn-primary btn-lg btn-outline-secondary"
-              // onClick={toggleEditForm} // go to edit form
-              style={{
-                backgroundColor: "#ff9900",
-                borderColor: "#ff9900",
-                padding: "0.5rem 1rem",
-              }}
-            >
-              Edit Item
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const AddForm = ({
-  isOpen,
-  toggleAddForm,
-  dataF,
-  setDataF,
-  viewer,
-  setViewer,
-}) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-
-  function Payment() {
-    const onSubmit = (data) => {
-      setViewer(1);
-      console.log(data); // log all data
-      setDataF(data);
-    };
-
-    return (
-      <div className="container mt-5 col-md-8">
-        <div className="row-md-6">
-          <h3>Enter Product information</h3>
-          <hr className="hr hr-blurry bg-dark m-0 mb-3 mt-3" />
-        </div>
-
-        <div className="row-md-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="container mt-5 ">
-            <h4>Product id</h4>
-            <input
-              {...register("id", { required: true, pattern: /[0-9]/ })}
-              placeholder="id number"
-              className="form-control"
-            />
-            {errors.id && (
-              <p className="text-danger">a product id number is required.</p>
-            )}
-
-            <h4>Product title</h4>
-            <input
-              {...register("title", { required: true })}
-              placeholder="item"
-              className="form-control"
-            />
-            {errors.title && (
-              <p className="text-danger">A product title is required.</p>
-            )}
-
-            <h4>Price</h4>
-            <input
-              {...register("price", { required: true })}
-              placeholder="$999.99"
-              className="form-control"
-            />
-            {errors.price && (
-              <p className="text-danger">A valid product price is required.</p>
-            )}
-
-            <h4>Description</h4>
-            <input
-              {...register("desc", { required: true })}
-              placeholder="A short description"
-              className="form-control"
-            />
-            {errors.desc && (
-              <p className="text-danger">Product description is required.</p>
-            )}
-
-            <h4>Product Category</h4>
-            <input
-              {...register("cat", { required: true })}
-              placeholder="i.e., Mens's clothing"
-              className="form-control"
-            />
-            {errors.cat && (
-              <p className="text-danger">Product category is required.</p>
-            )}
-
-            <h4>Image URL</h4>
-            <input
-              {...register("img", { required: true })}
-              placeholder="i.e., https://website.com/img.jpeg"
-              className="form-control"
-            />
-            {errors.img && (
-              <p className="text-danger">A valid Image URL is required.</p>
-            )}
-
-            <h4>Product star rating</h4>
-            <input
-              {...register("numStars", { required: true })}
-              placeholder="0"
-              className="form-control"
-            />
-            {errors.numStars && (
-              <p className="text-danger">Star rating is required.</p>
-            )}
-
-            <h4>Number of ratings</h4>
-            <input
-              {...register("numRatings", { required: true })}
-              placeholder="0"
-              className="form-control"
-            />
-            {errors.numRatings && (
-              <p className="text-danger">Number of ratings is required.</p>
-            )}
-            <button type="submit" className="btn btn-primary btn-outline-secondary btn-lg mt-3 mb-4" style={{ backgroundColor: "#ff9900", borderColor: "#ff9900" }}>
-              Confirm and add to database
-            </button>
-          </form>
-        </div>
-      </div>
-    );
-  }
-
-  function Confirmation() {
-    const handleOrder = () => {
-      setViewer(0);
-      setDataF({});
-      toggleAddForm();
-    };
-
-    return (
-      <div className="container mt-5">
-        <div>
-          <h1>Shipping and payment summary:</h1>
-
-          <hr className="hr hr-blurry bg-dark m-0 mt-3 mb-3" />
-          <div className="ms-5">
-            <h3>{dataF.fullName}</h3>
-            <p>{dataF.email}</p>
-            <p>XXXX-XXXX-XXXX-{dataF.creditCard.slice(-4)}</p>
-            <p>
-              {dataF.address} {dataF.address2}
-            </p>
-            <p>
-              {dataF.city}, {dataF.state} {dataF.zip}{" "}
-            </p>
-            <h4>Thank You!</h4>
-          </div>
-        </div>
-
-        <hr className="hr hr-blurry bg-dark m-0 mt-3 mb-3" />
-        <button
-          type="button"
-          className="btn btn-primary btn-outline-secondary btn-lg"
-          style={{ backgroundColor: "#ff9900", borderColor: "#ff9900" }}
-          onClick={handleOrder}
-        >
-          Shop for more items
-        </button>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      {isOpen && <div className="overlayForm"></div>}
-      <div className={`checkout-form ${isOpen ? "open" : ""}`}>
-        <div className="header bg-dark text-white d-flex justify-content-between align-items-center px-4 py-3">
-          <h2 className="m-0">Add Product</h2>
-          <button
-            type="button"
-            className="btn btn-lg btn-outline-light"
-            onClick={toggleAddForm}
-          >
-            Return to home
-          </button>
-        </div>
-        {viewer === 1 && <Confirmation />}
-        {viewer === 0 && <Payment />}
-      </div>
-    </>
-  );
-};
-
 const App = () => {
-  // const [filteredProducts, setFilteredProducts] = useState(productData);
-  // const [cartItems, setCartItems] = useState({});
-  // const [showSidebar, setShowSidebar] = useState(false);
-  // const [showCheckoutForm, setShowCheckoutForm] = useState(false);
-  // const [dataF, setDataF] = useState({});
-  // const [viewer, setViewer] = useState(0);
+  // State to manage the collapse status of each accordion item
+  const [openItem, setOpenItem] = useState(null);
 
-  // const filterProducts = (category) => {
-  //   if (category === "all") {
-  //     setFilteredProducts(productData);
-  //   } else {
-  //     const filtered = productData.filter(
-  //       (product) => product.category.toLowerCase() === category
-  //     );
-  //     setFilteredProducts(filtered);
-  //   }
-  // };
+  // Function to toggle the collapse status of each accordion item
+  const toggleCollapse = (item) => {
+    setOpenItem(openItem === item ? null : item);
+  };
 
-  // const handleSearch = (searchQuery) => {
-  //   const searchResults = productData.filter((product) =>
-  //     product.title.toLowerCase().includes(searchQuery.toLowerCase())
-  //   );
-  //   setFilteredProducts(searchResults);
-  // };
+  return (
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: 1 }}>
+        <div className="accordion" id="accordionExample">
 
-  // const toggleSidebar = () => {
-  //   setShowSidebar(!showSidebar);
-  //   if (showSidebar) {
-  //     document.body.classList.remove("no-scroll");
-  //   } else {
-  //     document.body.classList.add("no-scroll");
-  //   }
-  // };
-
-  // const toggleAddForm = () => {
-  //   setShowCheckoutForm(!showCheckoutForm);
-  //   if (showCheckoutForm) {
-  //     document.body.classList.remove("no-scroll");
-  //   } else {
-  //     document.body.classList.add("no-scroll");
-  //   }
-  // };
-
-  // return (
-  //   <div>
-  //     <Header
-  //       onSearch={handleSearch}
-  //       toggleSidebar={toggleSidebar}
-  //       toggleAddForm={toggleAddForm}
-  //     />
-  //     <hr className="hr hr-blurry bg-dark m-0" />
-  //     <FilterBar filterProducts={filterProducts} />
-
-  //     {/* <Sidebar
-  //       isOpen={showSidebar}
-  //       toggleSidebar={toggleSidebar}
-  //       cartItems={cartItems}
-  //       handleAdd={handleAdd}
-  //       handleSubtract={handleSubtract}
-  //       handleDelete={handleDelete}
-  //       calculateTotal={calculateTotal}
-  //       toggleCheckoutForm={toggleCheckoutForm}
-  //     /> */}
-
-  //     <AddForm
-  //       isOpen={showCheckoutForm}
-  //       toggleAddtForm={toggleAddForm}
-  //       dataF={dataF}
-  //       setDataF={setDataF}
-  //       viewer={viewer}
-  //       setViewer={setViewer}
-  //     />
-
-  //     <div className="container-fluid pt-4 overflow-auto">
-  //       <div className="row">
-  //         {filteredProducts.map((product) => (
-  //           <ProductCard key={product.id} product={product} />
-  //         ))}
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
-
-  return (<div>
-    <div class="accordion" id="accordionExample">
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
-          <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-            Accordion Item #1
-          </button>
-        </h2>
-        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-          <div class="accordion-body">
-            <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+          <div className="accordion-item">
+            <h2 className="accordion-header" id="headingOne">
+              <button
+                className="accordion-button"
+                type="button"
+                onClick={() => toggleCollapse(1)}
+                aria-expanded={openItem === 1 ? 'true' : 'false'}
+                aria-controls="collapseOne"
+              >
+                <strong>C</strong>reate: Add item to Database
+              </button>
+            </h2>
+            <div
+              id="collapseOne"
+              className={`accordion-collapse collapse ${openItem === 1 ? 'show' : ''}`}
+              aria-labelledby="headingOne"
+            >
+              <div className="accordion-body">
+                <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="headingTwo">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-            Accordion Item #2
-          </button>
-        </h2>
-        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-          <div class="accordion-body">
-            <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+
+          <div className="accordion-item">
+            <h2 className="accordion-header" id="headingTwo">
+              <button
+                className="accordion-button"
+                type="button"
+                onClick={() => toggleCollapse(2)}
+                aria-expanded={openItem === 2 ? 'true' : 'false'}
+                aria-controls="collapseTwo"
+              >
+                <strong>R</strong>ead: Show all items
+              </button>
+            </h2>
+            <div
+              id="collapseTwo"
+              className={`accordion-collapse collapse ${openItem === 2 ? 'show' : ''}`}
+              aria-labelledby="headingTwo"
+            >
+              <div className="accordion-body">
+                <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="headingThree">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-            Accordion Item #3
-          </button>
-        </h2>
-        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-          <div class="accordion-body">
-            <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+
+          <div className="accordion-item">
+            <h2 className="accordion-header" id="headingThree">
+              <button
+                className="accordion-button"
+                type="button"
+                onClick={() => toggleCollapse(3)}
+                aria-expanded={openItem === 3 ? 'true' : 'false'}
+                aria-controls="collapseThree"
+              >
+                <strong>U</strong>pdate: Modify information about a product
+              </button>
+            </h2>
+            <div
+              id="collapseThree"
+              className={`accordion-collapse collapse ${openItem === 3 ? 'show' : ''}`}
+              aria-labelledby="headingThree"
+            >
+              <div className="accordion-body">
+                <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+              </div>
+            </div>
           </div>
+
+          <div className="accordion-item">
+            <h2 className="accordion-header" id="headingFour">
+              <button
+                className="accordion-button"
+                type="button"
+                onClick={() => toggleCollapse(4)}
+                aria-expanded={openItem === 4 ? 'true' : 'false'}
+                aria-controls="collapseFour"
+              >
+                <strong>D</strong>elete: Remove a product from the Database
+              </button>
+            </h2>
+            <div
+              id="collapseFour"
+              className={`accordion-collapse collapse ${openItem === 4 ? 'show' : ''}`}
+              aria-labelledby="headingFour"
+            >
+              <div className="accordion-body">
+                <strong>This is the fourth item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+              </div>
+            </div>
+          </div>
+
+          <div className="accordion-item">
+            <h2 className="accordion-header" id="headingFive">
+              <button
+                className="accordion-button"
+                type="button"
+                onClick={() => toggleCollapse(5)}
+                aria-expanded={openItem === 5 ? 'true' : 'false'}
+                aria-controls="collapseFive"
+              >
+                About: Student info
+              </button>
+            </h2>
+            <div
+              id="collapseFive"
+              className={`accordion-collapse collapse ${openItem === 5 ? 'show' : ''}`}
+              aria-labelledby="headingFive"
+            >
+              <div className="accordion-body">
+                <strong>This is the fifth item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+              </div>
+            </div>
+          </div>          
         </div>
       </div>
     </div>
-  </div>);
+  );
 };
+
 
 export default App;

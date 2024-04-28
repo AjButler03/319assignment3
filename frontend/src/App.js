@@ -181,6 +181,32 @@ const UpdateForm = ({ onSubmit }) => {
   );
 };
 
+const StudentCard = ({ name, email, date, professor, imageSrc }) => {
+  return (
+    <div className="col">
+      <div className="card shadow-sm">
+        <img src={imageSrc} alt="Your Image" style={{ margin: '20px', objectFit: 'cover', borderRadius: '5px' }} />
+        <div className="card-body">
+          <ul>
+            <li>
+              <p><strong>Student name:</strong> {name}</p>
+            </li>
+            <li>
+              <p><strong>Email:</strong> {email}</p>
+            </li>
+            <li>
+              <p><strong>Date:</strong> {date}</p>
+            </li>
+            <li>
+              <p><strong>Professor name:</strong> {professor}</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 
 const DeleteProduct = () => {
@@ -212,10 +238,10 @@ const DeleteProduct = () => {
 };
 
 const App = () => {
-  
+
   const [openItem, setOpenItem] = useState(null);
 
-  
+
   const toggleCollapse = (item) => {
     setOpenItem(openItem === item ? null : item);
   };
@@ -381,7 +407,26 @@ const App = () => {
               aria-labelledby="headingFive"
             >
               <div className="accordion-body">
-                <strong>This is the fifth item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                <div className="album py-5">
+                  <div className="container">
+                    <div className="row row-cols-1 row-cols-sm-2 g-3">
+                      <StudentCard
+                        name="Andrew Butler"
+                        email="ajbutler@iastate.edu"
+                        date="9-3-2024"
+                        professor="Ali Jannesari"
+                        imageSrc="https://cdn.discordapp.com/attachments/1143198649736765460/1233979266513768448/andrew.JPG?ex=662f103f&is=662dbebf&hm=9095423f9e64aaa691dd8f64d36b5d3644f717e970fd0ac06cacedd850e64a85&"
+                      />
+                      <StudentCard
+                        name="Nhat Bui"
+                        email="nbui@iastate.edu"
+                        date="9-3-2024"
+                        professor="Ali Jannesari"
+                        imageSrc="https://cdn.discordapp.com/attachments/1143198649736765460/1233979265729691730/nat.jpg?ex=662f103f&is=662dbebf&hm=5d6f564d0389866e334125bad5229bb7aad1706acec9c6f1954552433b223363&"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

@@ -44,13 +44,16 @@ app.post("/addProduct", async (req, res) => {
     const values = Object.values(req.body);
 
     const newDocument = {
-      id: values[0], // also "id": req.body.id,
+      id: parseInt(values[0]), // also "id": req.body.id,
       title: values[1], // also "name": req.body.name,
       price: values[2], // also "price": req.body.price,
       description: values[3], // also "description": req.body.description,
       category: values[4],
       imageUrl: values[5], // also "imageUrl": req.body.imageUrl
-      rating: values[6] // grabbing rating
+      rating: { // Create an object for the rating
+        rate: parseFloat(values[6].rate), // Convert rate to a float
+        count: parseInt(values[6].count) // Convert count to an integer
+      }
     };
 
     console.log(newDocument);
@@ -72,7 +75,7 @@ app.delete("/deleteProduct/:id", async (req, res) => {
     const query = { id: id };
 
     // read data from robot to delete to send it to frontend
-    const robotDeleted = await db.collection("fakstore_catalog").findOne(query);
+    const robotDeleted = await db.collection("fakestore_catalog").findOne(query);
 
     // delete
     const results = await db.collection("fakestore_catalog").deleteOne(query);

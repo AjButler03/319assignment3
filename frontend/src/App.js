@@ -11,10 +11,8 @@ const productData = await fetch("http://localhost:8081/listProducts").then(
 ); // fetch product information, placed in productData variable
 
 
-const ItemForm = ({ onSubmit }) => {
+const ItemForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-
-
 
   const validateRatingRate = (value) => {
     if (value === '') return true; // Allow empty value
@@ -22,14 +20,29 @@ const ItemForm = ({ onSubmit }) => {
     return !isNaN(rate) && rate >= 0 && rate <= 5;
   };
 
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch("http://localhost:8081/addProduct", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      const result = await response.json();
+      console.log('Product added:', result);
+    } catch (error) {
+      console.error('Error adding product:', error);
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-
       <div className="mb-3 row">
         <div className="col-sm-2">
           <label htmlFor="id" className="form-label">ID:</label>
-          <input type="text" className="form-control" {...register('id')} />
-          {errors.id && <span className="text-danger">Id is required</span>}
+          <input type="text" className="form-control" {...register('id', { required: true })} />
+          {errors.id && <span className="text-danger">ID is required</span>}
         </div>
         <div className="col-sm-7">
           <label htmlFor="title" className="form-label">Title:</label>
@@ -50,34 +63,36 @@ const ItemForm = ({ onSubmit }) => {
       </div>
 
       <div className="mb-3">
-        <label htmlFor="imageUrl" className="form-label">Image URL:</label>
-        <input type="text" className="form-control" {...register('imageUrl')} />
-        {errors.category && <span className="text-danger">Image URL is required</span>}
+        <label htmlFor="category" className="form-label">Category:</label>
+        <input type="text" className="form-control" {...register('category', { required: true })} />
+        {errors.category && <span className="text-danger">Category is required</span>}
       </div>
 
       <div className="mb-3 row">
         <div className="col-sm-8">
-          <label htmlFor="category" className="form-label">Category:</label>
-          <input type="text" className="form-control" {...register('category', { required: true })} />
-          {errors.category && <span className="text-danger">Category is required</span>}
+
+          <label htmlFor="imageUrl" className="form-label">Image URL:</label>
+          <input type="text" className="form-control" {...register('image', { required: true })} />
+          {errors.imageUrl && <span className="text-danger">Image URL is required</span>}
         </div>
         <div className="col-sm-2">
           <label htmlFor="ratingRate" className="form-label">Rating Rate:</label>
-          <input type="text" className="form-control" {...register('ratingRate', { validate: validateRatingRate })} />
+          <input type="text" className="form-control" {...register('rating.rate', { validate: validateRatingRate })} />
           {errors.ratingRate && <span className="text-danger">Rating must be between 0 and 5</span>}
         </div>
         <div className="col-sm-2">
           <label htmlFor="ratingCount" className="form-label">Rating Count:</label>
-          <input type="text" className="form-control" {...register('ratingCount')} />
+          <input type="text" className="form-control" {...register('rating.count')} />
           {errors.ratingCount && <span className="text-danger">Rating is required</span>}
         </div>
       </div>
-
 
       <button type="submit" className="btn btn-primary">Submit Item</button>
     </form>
   );
 };
+
+
 
 const UpdateForm = ({ onSubmit }) => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -115,16 +130,17 @@ const UpdateForm = ({ onSubmit }) => {
       </div>
 
       <div className="mb-3">
-        <label htmlFor="imageUrl" className="form-label">New Image URL:</label>
-        <input type="text" className="form-control" {...register('imageUrl')} />
-        {errors.category && <span className="text-danger">Image URL is required</span>}
+        <label htmlFor="category" className="form-label">New Category:</label>
+        <input type="text" className="form-control" {...register('category', { required: true })} />
+        {errors.category && <span className="text-danger">Category is required</span>}
+
       </div>
 
       <div className="mb-3 row">
         <div className="col-sm-8">
-          <label htmlFor="category" className="form-label">New Category:</label>
-          <input type="text" className="form-control" {...register('category', { required: true })} />
-          {errors.category && <span className="text-danger">Category is required</span>}
+          <label htmlFor="imageUrl" className="form-label">New Image URL:</label>
+          <input type="text" className="form-control" {...register('imageUrl')} />
+          {errors.category && <span className="text-danger">Image URL is required</span>}
         </div>
         <div className="col-sm-2">
           <label htmlFor="ratingRate" className="form-label">New Rating Rate:</label>
@@ -319,12 +335,6 @@ const App = () => {
             >
               <div className="accordion-body">
                 <DeleteProduct />
-                {/* <div className="mb-3">
-                
-                  <label htmlFor="removeItemId" className="form-label">Remove item with ID:</label>
-                  <input type="text" className="form-control" id="removeItemId" />
-                </div>
-                <button type="button" className="btn btn-danger">Delete</button> */}
               </div>
             </div>
           </div>

@@ -5,11 +5,6 @@ import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./App.css";
 
-// import productData from "./products.json";
-const productData = await fetch("http://localhost:8081/listProducts").then(
-  (res) => res.json()
-); // fetch product information, placed in productData variable
-
 
 const ItemForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
@@ -103,8 +98,35 @@ const UpdateForm = ({ onSubmit }) => {
     return !isNaN(rate) && rate >= 0 && rate <= 5;
   };
 
+  const submitUpdate = async (data) => {
+    try {
+      const id = parseInt(data.id);
+      const response = await fetch(`http://localhost:8081/updateProduct/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title: data.title,
+          price: data.price,
+          description: data.description,
+          category: data.category,
+          image: data.image,
+          rating: {
+            rate: parseFloat(data['rating.rate']),
+            count: parseInt(data['rating.count'])
+          }
+        })
+      });
+      const result = await response.json();
+      console.log('Product updated:', result);
+    } catch (error) {
+      console.error('Error updating product:', error);
+    }
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(submitUpdate)}>
       <div className="mb-3 row">
         <div className="col-sm-2">
           <label htmlFor="id" className="form-label">ID:</label>
@@ -139,18 +161,18 @@ const UpdateForm = ({ onSubmit }) => {
       <div className="mb-3 row">
         <div className="col-sm-8">
           <label htmlFor="imageUrl" className="form-label">New Image URL:</label>
-          <input type="text" className="form-control" {...register('imageUrl')} />
-          {errors.category && <span className="text-danger">Image URL is required</span>}
+          <input type="text" className="form-control" {...register('image')} />
+          {errors.imageUrl && <span className="text-danger">Image URL is required</span>}
         </div>
         <div className="col-sm-2">
           <label htmlFor="ratingRate" className="form-label">New Rating Rate:</label>
-          <input type="text" className="form-control" {...register('ratingRate', { validate: validateRatingRate })} />
-          {errors.ratingRate && <span className="text-danger">Rating must be between 0 and 5</span>}
+          <input type="text" className="form-control" {...register('rating.rate', { validate: validateRatingRate })} />
+          {errors['rating.rate'] && <span className="text-danger">Rating must be between 0 and 5</span>}
         </div>
         <div className="col-sm-2">
           <label htmlFor="ratingCount" className="form-label">New Rating Count:</label>
-          <input type="text" className="form-control" {...register('ratingCount')} />
-          {errors.ratingCount && <span className="text-danger">Rating is required</span>}
+          <input type="text" className="form-control" {...register('rating.count')} />
+          {errors['rating.count'] && <span className="text-danger">Rating is required</span>}
         </div>
       </div>
 
@@ -158,6 +180,7 @@ const UpdateForm = ({ onSubmit }) => {
     </form>
   );
 };
+
 
 
 const DeleteProduct = () => {
@@ -189,10 +212,10 @@ const DeleteProduct = () => {
 };
 
 const App = () => {
-  // State to manage the collapse status of each accordion item
+  
   const [openItem, setOpenItem] = useState(null);
 
-  // Function to toggle the collapse status of each accordion item
+  
   const toggleCollapse = (item) => {
     setOpenItem(openItem === item ? null : item);
   };
@@ -219,22 +242,23 @@ const App = () => {
     }, [openItem]);
 
     return (
-      <div className="accordion-body">
+      <div className="accordion-body d-flex flex-wrap justify-content-around">
         {openItem === 2 && (
-          <ul>
-            {products.map(product => (
-              <li key={product.id}>
-                <strong>ID:</strong> {product.id} <br />
-                <strong>Title:</strong> {product.title} <br />
-                <strong>Price:</strong> ${product.price} <br />
-                <strong>Description:</strong> {product.description} <br />
-                <strong>Category:</strong> {product.category} <br />
-                <strong>Image URL:</strong> {product.image} <br />
-                <strong>Rating Rate:</strong> {product.rating.rate} <br />
-                <strong>Rating Count:</strong> {product.rating.count} <br />
-              </li>
-            ))}
-          </ul>
+          products.map(product => (
+            <div key={product.id} className="card m-2" style={{ width: "15rem" }}>
+              <img src={product.image} className="card-img-top" alt={product.title} />
+              <div className="card-body">
+                <h5 className="card-title">{product.title}</h5>
+                <p className="card-text small">{product.description}</p>
+              </div>
+              <ul className="list-group list-group-flush">
+                <li className="list-group-item"><strong>Price:</strong> ${product.price}</li>
+                <li className="list-group-item"><strong>Category:</strong> {product.category}</li>
+                <li className="list-group-item"><strong>Rating Rate:</strong> {product.rating.rate}</li>
+                <li className="list-group-item"><strong>Rating Count:</strong> {product.rating.count}</li>
+              </ul>
+            </div>
+          ))
         )}
       </div>
     );

@@ -49,7 +49,7 @@ app.post("/addProduct", async (req, res) => {
       price: values[2], // also "price": req.body.price,
       description: values[3], // also "description": req.body.description,
       category: values[4],
-      imageUrl: values[5], // also "imageUrl": req.body.imageUrl
+      image: values[5], // also "imageUrl": req.body.imageUrl
       rating: { // Create an object for the rating
         rate: parseFloat(values[6].rate), // Convert rate to a float
         count: parseInt(values[6].count) // Convert count to an integer
@@ -69,7 +69,7 @@ app.post("/addProduct", async (req, res) => {
 
 app.delete("/deleteProduct/:id", async (req, res) => {
   try {
-    const id = Number(req.params.id);
+    const id = parseInt(req.params.id);
     await client.connect();
     console.log("Product to delete :", id);
     const query = { id: id };
@@ -88,29 +88,29 @@ app.delete("/deleteProduct/:id", async (req, res) => {
 });
 
 app.put("/updateProduct/:id", async (req, res) => {
-  const id = Number(req.params.id);
+  const id = parseInt(req.params.id);
   const query = { id: id };
   await client.connect();
   console.log("Product to Update :", id);
   // Data for updating the document, typically comes from the request body
   // console.log(req.body);
   // read data from robot to update to send to frontend
-  const robotUpdated = await db.collection("fakestore_catalog").findOne(query);
+
+  const existingProduct = await db.collection("fakestore_catalog").findOne(query);
   const updateData = {
     $set: {
-      name: req.body.name,
+      title: req.body.title,
       price: req.body.price,
       description: req.body.description,
       category: req.body.category,
-      imageUrl: req.body.imageUrl,
+      image: req.body.image,
       rating: req.body.rating
     },
   };
-  // Add options if needed, for example { upsert: true } to create a document if it doesn't exist
-  const options = {};
+
   const results = await db
     .collection("fakestore_catalog")
-    .updateOne(query, updateData, options);
+    .updateOne(query, updateData);
   res.status(200);
   // If no document was found to update, you can choose to handle it by sending a 404 response
   if (results.matchedCount === 0) {
